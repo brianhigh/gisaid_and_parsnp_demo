@@ -1,11 +1,17 @@
 # Get sequence data from GISAID and create distance matrix and phylo tree
 #
-# Prerequisites: GISAID account, parsnp, and RStudio
+# Prerequisites: GISAID account, Anaconda or Miniconda, parsnp, and RStudio
 #
 # 1. You will need a GISAID account to download the data. Do that first.
 #    https://gisaid.org/register/
-# 2. Make sure parsnp has been installed in a conda environment, activate 
-#    that environment, then launch RStudio and open this script in RStudio.
+# 2. Make sure parsnp has been installed in a conda environment, for example:
+#
+#    $ conda create -y --name parsnp-env
+#    $ conda activate parsnp-env
+#    $ conda install -y -c bioconda parsnp
+#
+#    Then launch RStudio and open this script in RStudio and run it.
+#
 #    You may need to modify the parsnp_path variable below so R can find it.
 
 # Load packages, installing as needed
@@ -15,7 +21,7 @@ pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
 # Define path to parsnp
-#parsnp_path <- file.path(path_home_r(), 'miniconda3/bin/parsnp')
+#parsnp_path <- file.path(path_home_r(), 'miniconda3/envs/parsnp-env/bin/parsnp')
 parsnp_path <- 'parsnp'
 
 # Setup folders
