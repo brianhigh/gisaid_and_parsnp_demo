@@ -8,4 +8,4 @@ This is an example of the following workflow:
 - Produce a distance matrix and phylogenetic tree (using parsnp)
 - Plot the phylogenetic tree and save as a PDF file
 
-To run this workflow, run the R script [code/gisaid_and_parsnip_demo.R](gisaid_and_parsnip_demo.R) after addressing the two prerequisites mentioned in the beginning comments of that script.
+To run this workflow, run the R script [blob/main/code/gisaid_and_parsnp_demo.R](gisaid_and_parsnip_demo.R) after addressing the two prerequisites mentioned in the beginning comments of that script.
