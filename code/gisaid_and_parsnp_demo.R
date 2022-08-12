@@ -21,8 +21,7 @@ pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
 # Define path to parsnp
-#parsnp_path <- file.path(path_home_r(), 'miniconda3/envs/parsnp-env/bin/parsnp')
-parsnp_path <- 'parsnp'
+parsnp_path <- file.path(path_home_r(), 'miniconda3/envs/parsnp-env/bin/parsnp')
 
 # Setup folders
 folders <- get_folders()
@@ -91,7 +90,7 @@ res <- write_fasta(full_df_with_seq, fasta_dir)
 # Get the reference genome and save sequence in fasta format
 reference_genome_id <- "NC_045512.2"
 reference_genome <- read.GenBank(reference_genome_id)
-ref_file <- file.path(data_dir, paste0(reference_genome_id, "_Reference.fasta")
+ref_file <- file.path(data_dir, paste0(reference_genome_id, "_Reference.fasta"))
 write.FASTA(reference_genome, ref_file) 
 
 # Create output folder for parsnp
