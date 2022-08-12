@@ -49,7 +49,7 @@ ids5 <- c('EPI_ISL_7845318', 'EPI_ISL_7845316', 'EPI_ISL_7845317',
           'EPI_ISL_7845315', 'EPI_ISL_8897004')
 
 # Get a random sample of 20 accession IDs from query
-df <- query(
+df_ids <- query(
     credentials = credentials, 
     location = "North America / USA / Washington / King County", 
     from = "2021-04-23", 
@@ -60,32 +60,32 @@ df <- query(
 
 # Get random sample of 20 IDs
 set.seed(1)
-ids <- sample(df$accession_id, 20)
+ids <- sample(df_ids$accession_id, 20)
 
 # Add additional 5 IDs
 ids <- c(ids, ids5)
 
 # Download sequences
-full_df_with_seq <- download(
+df_seqs <- download(
     credentials = credentials, 
     list_of_accession_ids = ids, 
     get_sequence = TRUE
 )
 
 # Add host_type variable to use in sequence label and fasta filename
-full_df_with_seq <- full_df_with_seq %>% 
+df_seqs <- df_seqs %>% 
     mutate(host_type = ifelse(host == 'Felis catus','Feline',
                               ifelse(host == 'Canis lupus familiaris','Canine', 
                                      gsub(' ', '_', host))))
 
 # Save metadata as CSV
 csv_file <- file.path(data_dir, 'GISAID_metadata.csv')
-write.csv(full_df_with_seq %>% select(-sequence), csv_file, row.names = FALSE)
+write.csv(df_seqs %>% select(-sequence), csv_file, row.names = FALSE)
 
 # Split sequence data into a single fasta file per accession ID
-fasta_dir <- file.path(data_dir, 'genomes')
+fasta_dir <- file.path(data_dir, 'genomes_fasta')
 dir.create(fasta_dir, showWarnings = FALSE, recursive = TRUE)
-res <- write_fasta(full_df_with_seq, fasta_dir)
+res <- write_fasta(df_seqs, fasta_dir)
 
 # Get the reference genome and save sequence in fasta format
 reference_genome_id <- "NC_045512.2"
