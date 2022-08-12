@@ -94,18 +94,18 @@ ref_file <- file.path(data_dir, paste0(reference_genome_id, "_Reference.fasta"))
 write.FASTA(reference_genome, ref_file) 
 
 # Create output folder for parsnp
-output_dir <- here(folders$results)
-dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+results_dir <- here(folders$results)
+dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Run parsnp 
 parsnp_cmd <- 
     paste(parsnp_path, "-p 4 -c -r", ref_file, 
-          "-d", fasta_dir, "-o", output_dir)
+          "-d", fasta_dir, "-o", results_dir)
 res <- system(parsnp_cmd, intern = TRUE)
-writeLines(res, file.path(output_dir, "parsnp_output.txt"))
+writeLines(res, file.path(results_dir, "parsnp_output.txt"))
 
 # Relabel parsnip.tree by removing filename suffixes from genome labels
-parsnp_tree_fn <- file.path(output_dir, "parsnp.tree")
+parsnp_tree_fn <- file.path(results_dir, "parsnp.tree")
 parsnp_tree <- readLines(parsnp_tree_fn)
 parsnp_tree <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', parsnp_tree)
 writeLines(parsnp_tree, parsnp_tree_fn)
@@ -113,7 +113,7 @@ writeLines(parsnp_tree, parsnp_tree_fn)
 # Make distances matrix and save as CSV
 tree <- read.tree(parsnp_tree_fn)
 PatristicDistMatrix <- cophenetic(tree)
-write.csv(PatristicDistMatrix, file.path(output_dir, "distances.csv"))
+write.csv(PatristicDistMatrix, file.path(results_dir, "distances.csv"))
 
 # Create output folder for figures
 figures_dir <- here(folders$figures)
