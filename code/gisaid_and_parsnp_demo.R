@@ -1,4 +1,4 @@
-# Get sequence data from GISAID and create distance matrix and phylo tree
+# Get data from GISAID and create distance matrix and phylogenetic tree
 #
 # Prerequisites: GISAID account, Anaconda or Miniconda, parsnp, and RStudio
 #
@@ -66,17 +66,12 @@ ids <- sample(df$accession_id, 20)
 # Add additional 5 IDs
 ids <- c(ids, ids5)
 
-# Download sequences and save as fasta and CSV
+# Download sequences
 full_df_with_seq <- download(
     credentials = credentials, 
     list_of_accession_ids = ids, 
     get_sequence = TRUE
 )
-
-# Save sequences to a combined fasta file
-fasta_file <- file.path(data_dir, 'GISAID_sequences.fasta')
-export_fasta(full_df_with_seq, fasta_file,
-             date_format='%Y-%m-%d', delimiter='|')
 
 # Add host_type variable to use in sequence label and fasta filename
 full_df_with_seq <- full_df_with_seq %>% 
@@ -85,17 +80,18 @@ full_df_with_seq <- full_df_with_seq %>%
                                      gsub(' ', '_', host))))
 
 # Save metadata as CSV
-csv_file <- file.path(data_dir, 'GISAID_genomes.csv')
+csv_file <- file.path(data_dir, 'GISAID_metadata.csv')
 write.csv(full_df_with_seq %>% select(-sequence), csv_file, row.names = FALSE)
 
-# Split results into a single fasta file per accession ID
-fasta_dir <- file.path(data_dir, 'genomes_dir')
+# Split sequence data into a single fasta file per accession ID
+fasta_dir <- file.path(data_dir, 'genomes')
 dir.create(fasta_dir, showWarnings = FALSE, recursive = TRUE)
 res <- write_fasta(full_df_with_seq, fasta_dir)
 
 # Get the reference genome and save sequence in fasta format
-reference_genome <- read.GenBank("NC_045512.2")
-ref_file <- file.path(data_dir, "Reference.fasta")
+reference_genome_id <- "NC_045512.2"
+reference_genome <- read.GenBank(reference_genome_id)
+ref_file <- file.path(data_dir, paste0(reference_genome_id, "_Reference.fasta")
 write.FASTA(reference_genome, ref_file) 
 
 # Create output folder for parsnp
@@ -124,7 +120,7 @@ write.csv(PatristicDistMatrix, file.path(output_dir, "distances.csv"))
 figures_dir <- here(folders$figures)
 dir.create(figures_dir, showWarnings = FALSE, recursive = TRUE)
 
-# Make plylo tree and save as PDF
-pdf(file = file.path(figures_dir, "Rplot.pdf"), width = 8, height = 8)
+# Make phylogenetic tree and save as PDF
+pdf(file = file.path(figures_dir, "parsnp_tree.pdf"), width = 8, height = 8)
 plot(tree)
 dev.off()
