@@ -110,7 +110,7 @@ parsnp_tree <- readLines(parsnp_tree_fn)
 parsnp_tree <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', parsnp_tree)
 writeLines(parsnp_tree, parsnp_tree_fn)
 
-# Make distances matrix and save as CSV
+# Make distance matrix from tree and save as CSV
 tree <- read.tree(parsnp_tree_fn)
 PatristicDistMatrix <- cophenetic(tree)
 write.csv(PatristicDistMatrix, file.path(results_dir, "distances.csv"))
