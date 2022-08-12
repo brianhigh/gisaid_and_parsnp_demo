@@ -74,8 +74,8 @@ df_seqs <- download(
 
 # Add host_type variable to use in sequence label and fasta filename
 df_seqs <- df_seqs %>% 
-    mutate(host_type = ifelse(host == 'Felis catus','Feline',
-                              ifelse(host == 'Canis lupus familiaris','Canine', 
+    mutate(host_type = ifelse(host == 'Felis catus', 'Feline',
+                              ifelse(host == 'Canis lupus familiaris', 'Canine', 
                                      gsub(' ', '_', host))))
 
 # Save metadata as CSV
