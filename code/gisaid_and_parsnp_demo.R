@@ -121,10 +121,10 @@ res <- system(harvesttools_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "harvesttools_output.txt"))
 
 # Run snp-dists to create a distance matrix file with snp distances
-snp-dists_cmd <- 
+snp_dists_cmd <- 
     paste(file.path(bin_path, "snp-dists"), 
           "-b -j 4", file.path(results_dir, "parsnp.aln"))
-res <- system(snp-dists_cmd, intern = TRUE)
+res <- system(snp_dists_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "distances.tab"))
 
 # Relabel distances.tab by removing filename suffixes from genome labels
