@@ -101,7 +101,7 @@ dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Run parsnp 
 parsnp_cmd <- 
-    paste(file.path(bin_path, parsnp), "-p 4 -c -r", ref_file, 
+    paste(file.path(bin_path, "parsnp"), "-p 4 -c -r", ref_file, 
           "-d", fasta_dir, "-o", results_dir)
 res <- system(parsnp_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "parsnp_output.txt"))
@@ -114,7 +114,7 @@ writeLines(parsnp_tree, parsnp_tree_fn)
 
 # Run harvesttools 
 harvesttools_cmd <- 
-    paste(file.path(bin_path, harvesttools), 
+    paste(file.path(bin_path, "harvesttools"), 
           "-i", file.path(results_dir, "parsnp.ggr"), 
           "-M", file.path(results_dir, "parsnp.aln"))
 res <- system(harvesttools_cmd, intern = TRUE)
@@ -122,7 +122,7 @@ writeLines(res, file.path(results_dir, "harvesttools_output.txt"))
 
 # Run snp-dists to create a distance matrix file with snp distances
 snp-dists_cmd <- 
-    paste(file.path(bin_path, snp-dists), 
+    paste(file.path(bin_path, "snp-dists"), 
           "-b -j 4", file.path(results_dir, "parsnp.aln"))
 res <- system(snp-dists_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "distances.tab"))
