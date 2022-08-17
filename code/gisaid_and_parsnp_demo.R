@@ -118,7 +118,6 @@ harvesttools_cmd <-
           "-i", file.path(results_dir, "parsnp.ggr"), 
           "-M", file.path(results_dir, "parsnp.aln"))
 res <- system(harvesttools_cmd, intern = TRUE)
-writeLines(res, file.path(results_dir, "harvesttools_output.txt"))
 
 # Run snp-dists to create a distance matrix file with pairwise snp distances
 snp_dists_cmd <- 
