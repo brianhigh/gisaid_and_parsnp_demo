@@ -123,7 +123,7 @@ writeLines(res, file.path(results_dir, "harvesttools_output.txt"))
 # Run snp-dists to create a distance matrix file with snp distances
 snp_dists_cmd <- 
     paste(file.path(bin_path, "snp-dists"), 
-          "-b -j 4", file.path(results_dir, "parsnp.aln"))
+          "-b", file.path(results_dir, "parsnp.aln"))
 res <- system(snp_dists_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "distances.tab"))
 
