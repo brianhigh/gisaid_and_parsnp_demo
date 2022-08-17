@@ -99,7 +99,7 @@ write.FASTA(reference_genome, ref_file)
 results_dir <- here(folders$results)
 dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
-# Run parsnp 
+# Run parsnp to align the genomes and produce a phylogenetic tree file
 parsnp_cmd <- 
     paste(file.path(bin_path, "parsnp"), "-p 4 -c -r", ref_file, 
           "-d", fasta_dir, "-o", results_dir)
@@ -112,7 +112,7 @@ parsnp_tree <- readLines(parsnp_tree_fn)
 parsnp_tree <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', parsnp_tree)
 writeLines(parsnp_tree, parsnp_tree_fn)
 
-# Run harvesttools 
+# Run harvesttools to create a FASTA file containing the aligned genomes
 harvesttools_cmd <- 
     paste(file.path(bin_path, "harvesttools"), 
           "-i", file.path(results_dir, "parsnp.ggr"), 
@@ -120,7 +120,7 @@ harvesttools_cmd <-
 res <- system(harvesttools_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "harvesttools_output.txt"))
 
-# Run snp-dists to create a distance matrix file with snp distances
+# Run snp-dists to create a distance matrix file with pairwise snp distances
 snp_dists_cmd <- 
     paste(file.path(bin_path, "snp-dists"), 
           "-b", file.path(results_dir, "parsnp.aln"))
