@@ -1,10 +1,10 @@
 # Get data from GISAID and create distance matrix and phylogenetic tree
 #
-# Prerequisites: GISAID account, Anaconda or Miniconda, parsnp, and RStudio
+# Prerequisites: GISAID account, Anaconda or Miniconda, and RStudio
 #
 # 1. You will need a GISAID account to download the data. Do that first.
 #    https://gisaid.org/register/
-# 2. Install parsnp, harvesttools, and snp-dists. For example:
+# 2. Install parsnp, harvesttools, and snp-dists with conda. For example:
 #
 #    $ conda create -y --name parsnp-env
 #    $ conda activate parsnp-env
