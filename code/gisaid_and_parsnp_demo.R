@@ -138,5 +138,5 @@ dir.create(figures_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Make phylogenetic tree and save
 pdf(file = file.path(figures_dir, "parsnp_tree.pdf"), width = 8, height = 8)
-plot(tree, type = "fan", cex = 0.6)
+plot(tree, type = "fan", cex = 0.5)
 dev.off()
