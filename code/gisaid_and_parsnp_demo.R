@@ -4,11 +4,13 @@
 #
 # 1. You will need a GISAID account to download the data. Do that first.
 #    https://gisaid.org/register/
-# 2. Make sure parsnp has been installed in a conda environment, for example:
+# 2. Install parsnp, harvesttools, and snp-dists. For example:
 #
 #    $ conda create -y --name parsnp-env
 #    $ conda activate parsnp-env
 #    $ conda install -y -c bioconda parsnp
+#    $ conda install -y -c bioconda harvesttools
+#    $ conda install -y -c bioconda snp-dists
 #
 #    Then launch RStudio and open this script in RStudio and run it.
 #
@@ -20,8 +22,8 @@ pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here)
 pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
-# Define path to parsnp
-parsnp_path <- file.path(path_home_r(), 'miniconda3/envs/parsnp-env/bin/parsnp')
+# Define path to parsnp, harvesttools, and snp-dists
+bin_path <- file.path(path_home_r(), 'miniconda3/envs/parsnp-env/bin')
 
 # Setup folders
 folders <- get_folders()
@@ -99,7 +101,7 @@ dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Run parsnp 
 parsnp_cmd <- 
-    paste(parsnp_path, "-p 4 -c -r", ref_file, 
+    paste(file.path(bin_path, parsnp), "-p 4 -c -r", ref_file, 
           "-d", fasta_dir, "-o", results_dir)
 res <- system(parsnp_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "parsnp_output.txt"))
@@ -110,7 +112,28 @@ parsnp_tree <- readLines(parsnp_tree_fn)
 parsnp_tree <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', parsnp_tree)
 writeLines(parsnp_tree, parsnp_tree_fn)
 
-# Make distance matrix from tree and save as CSV
+# Run harvesttools 
+harvesttools_cmd <- 
+    paste(file.path(bin_path, harvesttools), 
+          "-i", file.path(results_dir, "parsnp.ggr"), 
+          "-M", file.path(results_dir, "parsnp.aln"))
+res <- system(harvesttools_cmd, intern = TRUE)
+writeLines(res, file.path(results_dir, "harvesttools_output.txt"))
+
+# Run snp-dists to create a distance matrix file with snp distances
+snp-dists_cmd <- 
+    paste(file.path(bin_path, snp-dists), 
+          "-b -j 4", file.path(results_dir, "parsnp.aln"))
+res <- system(snp-dists_cmd, intern = TRUE)
+writeLines(res, file.path(results_dir, "distances.tab"))
+
+# Relabel distances.tab by removing filename suffixes from genome labels
+distances_fn <- file.path(results_dir, "distances.tab")
+distances_txt <- readLines(distances_fn)
+distances_txt <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', distances_txt)
+writeLines(distances_txt, distances_fn)
+
+# Make distance matrix with normalized snp distances (from tree) and save
 tree <- read.tree(parsnp_tree_fn)
 PatristicDistMatrix <- cophenetic(tree)
 write.csv(PatristicDistMatrix, file.path(results_dir, "distances.csv"))
@@ -119,7 +142,7 @@ write.csv(PatristicDistMatrix, file.path(results_dir, "distances.csv"))
 figures_dir <- here(folders$figures)
 dir.create(figures_dir, showWarnings = FALSE, recursive = TRUE)
 
-# Make phylogenetic tree and save as PDF
+# Make phylogenetic tree and save
 pdf(file = file.path(figures_dir, "parsnp_tree.pdf"), width = 8, height = 8)
 plot(tree)
 dev.off()
