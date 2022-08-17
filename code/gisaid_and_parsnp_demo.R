@@ -125,13 +125,8 @@ snp_dists_cmd <-
     paste(file.path(bin_path, "snp-dists"), 
           "-b", file.path(results_dir, "parsnp.aln"))
 res <- system(snp_dists_cmd, intern = TRUE)
+res <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', res)
 writeLines(res, file.path(results_dir, "distances.tab"))
-
-# Relabel distances.tab by removing filename suffixes from genome labels
-distances_fn <- file.path(results_dir, "distances.tab")
-distances_txt <- readLines(distances_fn)
-distances_txt <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', distances_txt)
-writeLines(distances_txt, distances_fn)
 
 # Make distance matrix with normalized snp distances (from tree) and save
 tree <- read.tree(parsnp_tree_fn)
