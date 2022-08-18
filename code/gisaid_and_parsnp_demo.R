@@ -6,11 +6,8 @@
 #    https://gisaid.org/register/
 # 2. Install parsnp, harvesttools, and snp-dists with conda. For example:
 #
-#    $ conda create -y --name parsnp-env
+#    $ conda create -y -c bioconda -n parsnp-env parsnp harvesttools snp-dists
 #    $ conda activate parsnp-env
-#    $ conda install -y -c bioconda parsnp
-#    $ conda install -y -c bioconda harvesttools
-#    $ conda install -y -c bioconda snp-dists
 #
 #    Then launch RStudio and open this script in RStudio and run it.
 #
