@@ -20,8 +20,17 @@ pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
 # Define path to parsnp, harvesttools, and snp-dists
-#bin_path <- file.path(path_home_r(), '.conda/envs/parsnp-env/bin')
-bin_path <- file.path(path_home_r(), 'miniconda3/envs/parsnp-env/bin')
+bin_path <- '.'
+if (Sys.getenv("CONDA_PREFIX") == "") {
+  conda_envs <- c('.conda/envs/parsnp-env', 'miniconda3/envs/parsnp-env')
+  for (env in conda_envs) {
+    if (dir.exists(file.path(path_home_r(), env))) {
+      bin_path <- file.path(path_home_r(), env ,'bin')
+    }
+  }
+} else {
+  bin_path <- file.path(Sys.getenv("CONDA_PREFIX"), 'bin')
+}
 
 # Setup folders
 folders <- get_folders()
@@ -35,13 +44,13 @@ credentials <- login(username = username, password = password)
 
 # Define a function for writing fasta sequences to files
 write_fasta <- function (df, data_dir = '.') {
-    sapply(1:nrow(df), function(x) {
-        if (!is.na(df$accession_id[x]) & !is.na(df$sequence[x])) {
-            id <- gsub('EPI_ISL_', '', df$accession_id[x])
-            writeLines(c(c(paste0('>', id, '_', df$host_type[x])), df$sequence[x]), 
-                       con = file.path(data_dir, paste0(id, '_', df$host_type[x], '.fasta')))
-        }
-    })
+  sapply(1:nrow(df), function(x) {
+    if (!is.na(df$accession_id[x]) & !is.na(df$sequence[x])) {
+      id <- gsub('EPI_ISL_', '', df$accession_id[x])
+      writeLines(c(c(paste0('>', id, '_', df$host_type[x])), df$sequence[x]), 
+                 con = file.path(data_dir, paste0(id, '_', df$host_type[x], '.fasta')))
+    }
+  })
 }
 
 # Define a vector of 5 GISAID IDs to be downloaded
@@ -50,12 +59,12 @@ ids5 <- c('EPI_ISL_7845318', 'EPI_ISL_7845316', 'EPI_ISL_7845317',
 
 # Get a random sample of 20 accession IDs from query
 df_ids <- query(
-    credentials = credentials, 
-    location = "North America / USA / Washington / King County", 
-    from = "2021-04-23", 
-    to = "2021-08-18",
-    complete = TRUE,
-    fast = TRUE
+  credentials = credentials, 
+  location = "North America / USA / Washington / King County", 
+  from = "2021-04-23", 
+  to = "2021-08-18",
+  complete = TRUE,
+  fast = TRUE
 )
 
 # Get random sample of 20 IDs
@@ -67,16 +76,16 @@ ids <- c(ids, ids5)
 
 # Download sequences
 df_seqs <- download(
-    credentials = credentials, 
-    list_of_accession_ids = ids, 
-    get_sequence = TRUE
+  credentials = credentials, 
+  list_of_accession_ids = ids, 
+  get_sequence = TRUE
 )
 
 # Add host_type variable to use in sequence label and fasta filename
 df_seqs <- df_seqs %>% 
-    mutate(host_type = ifelse(host == 'Felis catus', 'Feline',
-                              ifelse(host == 'Canis lupus familiaris', 'Canine', 
-                                     gsub(' ', '_', host))))
+  mutate(host_type = ifelse(host == 'Felis catus', 'Feline',
+                            ifelse(host == 'Canis lupus familiaris', 'Canine', 
+                                   gsub(' ', '_', host))))
 
 # Save metadata as CSV
 csv_file <- file.path(data_dir, 'GISAID_metadata.csv')
@@ -99,8 +108,8 @@ dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Run parsnp to align the genomes and produce a phylogenetic tree file
 parsnp_cmd <- 
-    paste(file.path(bin_path, "parsnp"), "-p 4 -c -r", ref_file, 
-          "-d", fasta_dir, "-o", results_dir)
+  paste(file.path(bin_path, "parsnp"), "-p 4 -c -r", ref_file, 
+        "-d", fasta_dir, "-o", results_dir)
 res <- system(parsnp_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "parsnp_output.txt"))
 
@@ -112,15 +121,15 @@ writeLines(parsnp_tree, parsnp_tree_fn)
 
 # Run harvesttools to create a FASTA file containing the aligned genomes
 harvesttools_cmd <- 
-    paste(file.path(bin_path, "harvesttools"), 
-          "-i", file.path(results_dir, "parsnp.ggr"), 
-          "-M", file.path(results_dir, "parsnp.aln"))
+  paste(file.path(bin_path, "harvesttools"), 
+        "-i", file.path(results_dir, "parsnp.ggr"), 
+        "-M", file.path(results_dir, "parsnp.aln"))
 res <- system(harvesttools_cmd, intern = TRUE)
 
 # Run snp-dists to create a distance matrix file with pairwise snp distances
 snp_dists_cmd <- 
-    paste(file.path(bin_path, "snp-dists"), 
-          "-b", file.path(results_dir, "parsnp.aln"))
+  paste(file.path(bin_path, "snp-dists"), 
+        "-b", file.path(results_dir, "parsnp.aln"))
 res <- system(snp_dists_cmd, intern = TRUE)
 res <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', res)
 writeLines(res, file.path(results_dir, "distances.tab"))
