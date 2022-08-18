@@ -11,7 +11,7 @@
 #
 #    Then launch RStudio and open this script in RStudio and run it.
 #
-#    You may need to modify the parsnp_path variable below so R can find it.
+#    You may need to modify the bin_path variable below so R can find it.
 
 # Load packages, installing as needed
 if (!require("pacman", quietly = TRUE)) install.packages("pacman")
@@ -20,6 +20,7 @@ pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
 # Define path to parsnp, harvesttools, and snp-dists
+#bin_path <- file.path(path_home_r(), '.conda/envs/parsnp-env/bin')
 bin_path <- file.path(path_home_r(), 'miniconda3/envs/parsnp-env/bin')
 
 # Setup folders
