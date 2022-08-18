@@ -20,12 +20,13 @@ pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
 # Define path to parsnp, harvesttools, and snp-dists
-bin_path <- '.'
 if (Sys.getenv("CONDA_PREFIX") == "") {
-  conda_envs <- c('.conda/envs/parsnp-env', 'miniconda3/envs/parsnp-env')
-  for (env in conda_envs) {
-    if (dir.exists(file.path(path_home_r(), env))) {
-      bin_path <- file.path(path_home_r(), env ,'bin')
+  bin_path <- '.'
+  env_name <- 'parsnp-env'
+  env_paths <- c('.conda/envs', 'miniconda3/envs')
+  for (env_path in env_paths) {
+    if (dir.exists(file.path(path_home_r(), env_path, env_name))) {
+      bin_path <- file.path(path_home_r(), env_path, env_name, 'bin')
     }
   }
 } else {
