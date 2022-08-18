@@ -25,9 +25,8 @@ if (Sys.getenv("CONDA_PREFIX") == "") {
   env_name <- 'parsnp-env'
   env_paths <- c('.conda/envs', 'miniconda3/envs')
   for (env_path in env_paths) {
-    if (dir.exists(file.path(path_home_r(), env_path, env_name))) {
-      bin_path <- file.path(path_home_r(), env_path, env_name, 'bin')
-    }
+    bin_dir <- file.path(path_home_r(), env_path, env_name, 'bin')
+    if (dir.exists(bin_dir)) bin_path <- bin_dir
   }
 } else {
   bin_path <- file.path(Sys.getenv("CONDA_PREFIX"), 'bin')
