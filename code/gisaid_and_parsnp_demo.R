@@ -33,7 +33,8 @@ if (Sys.getenv("CONDA_PREFIX") == "") {
 }
 
 # Setup folders
-folders <- get_folders()
+conf <- here::here('folders.yml')
+folders <- get_folders(conf)
 data_dir <- here(folders$data)
 dir.create(data_dir, showWarnings = FALSE, recursive = TRUE)
 
