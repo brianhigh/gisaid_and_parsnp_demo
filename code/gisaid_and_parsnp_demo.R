@@ -1,36 +1,23 @@
 # Get data from GISAID and create distance matrix and phylogenetic tree
 #
-# Prerequisites: GISAID account, Anaconda or Miniconda, and RStudio
-#
-# 1. You will need a GISAID account to download the data. Do that first.
-#    https://gisaid.org/register/
-# 2. Install parsnp, harvesttools, and snp-dists with conda. For example:
-#
-#    $ conda create -y -c bioconda -n parsnp-env parsnp harvesttools snp-dists
-#    $ conda activate parsnp-env
-#
-#    Then launch RStudio and open this script in RStudio and run it.
-#
-#    You may need to modify the bin_path variable below so R can find it.
+# Prerequisites: GISAID account and RStudio
 
 # Load packages, installing as needed
 if (!require("pacman", quietly = TRUE)) install.packages("pacman")
-pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here)
+pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here, reticulate)
+#pacman::p_install_gh("Wytamma/GISAIDR", force = TRUE)
 pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
-# Define path to parsnp, harvesttools, and snp-dists
-if (Sys.getenv("CONDA_PREFIX") == "") {
-  bin_path <- '.'
-  env_name <- 'parsnp-env'
-  env_paths <- c('.conda/envs', 'miniconda3/envs')
-  for (env_path in env_paths) {
-    bin_dir <- file.path(path_home_r(), env_path, env_name, 'bin')
-    if (dir.exists(bin_dir)) bin_path <- bin_dir
-  }
-} else {
-  bin_path <- file.path(Sys.getenv("CONDA_PREFIX"), 'bin')
+# Create conda environment if it does not exist
+env_name <- 'parsnp-env'
+env_pkgs <- c('parsnp', 'harvesttools', 'snp-dists')
+if (!file.exists(conda_binary())) install_miniconda()
+if (!condaenv_exists(env_name, conda = conda_binary())) { 
+  conda_create(envname = env_name, packages = env_pkgs,  
+               conda = conda_binary(), channel = 'bioconda')
 }
+use_condaenv(env_name, conda = conda_binary())
 
 # Setup folders
 conf <- here::here('folders.yml')
@@ -109,7 +96,7 @@ dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Run parsnp to align the genomes and produce a phylogenetic tree file
 parsnp_cmd <- 
-  paste(file.path(bin_path, "parsnp"), "-p 4 -c -r", ref_file, 
+  paste(conda_binary(), "run", "parsnp", "-p 4 -c -r", ref_file, 
         "-d", fasta_dir, "-o", results_dir)
 res <- system(parsnp_cmd, intern = TRUE)
 writeLines(res, file.path(results_dir, "parsnp_output.txt"))
@@ -122,14 +109,14 @@ writeLines(parsnp_tree, parsnp_tree_fn)
 
 # Run harvesttools to create a FASTA file containing the aligned genomes
 harvesttools_cmd <- 
-  paste(file.path(bin_path, "harvesttools"), 
+  paste(conda_binary(), "run", "harvesttools", 
         "-i", file.path(results_dir, "parsnp.ggr"), 
         "-M", file.path(results_dir, "parsnp.aln"))
 res <- system(harvesttools_cmd, intern = TRUE)
 
 # Run snp-dists to create a distance matrix file with pairwise snp distances
 snp_dists_cmd <- 
-  paste(file.path(bin_path, "snp-dists"), 
+  paste(conda_binary(), "run", "snp-dists", 
         "-b", file.path(results_dir, "parsnp.aln"))
 res <- system(snp_dists_cmd, intern = TRUE)
 res <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', res)
