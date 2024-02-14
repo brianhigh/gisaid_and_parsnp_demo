@@ -12,7 +12,7 @@ pacman::p_load_gh("deohs/folders")
 # Create conda environment if it does not exist
 env_name <- 'parsnp-env'
 env_pkgs <- c('parsnp', 'harvesttools', 'snp-dists')
-if (!file.exists(conda_binary())) install_miniconda()
+if (!dir.exists(miniconda_path())) install_miniconda()
 if (!condaenv_exists(env_name, conda = conda_binary())) { 
   conda_create(envname = env_name, packages = env_pkgs,  
                conda = conda_binary(), channel = 'bioconda')
@@ -96,9 +96,11 @@ dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Run parsnp to align the genomes and produce a phylogenetic tree file
 parsnp_cmd <- 
-  paste(conda_binary(), "run", "parsnp", "-p 4 -c -r", ref_file, 
+  paste("run", "-n", env_name, 
+        "parsnp", "-p 4 -c -r", ref_file, 
         "-d", fasta_dir, "-o", results_dir)
-res <- system(parsnp_cmd, intern = TRUE)
+res <- system2(command = conda_binary(), args = parsnp_cmd, 
+               stdout = TRUE, stderr = TRUE)
 writeLines(res, file.path(results_dir, "parsnp_output.txt"))
 
 # Relabel parsnip.tree by removing filename suffixes from genome labels
@@ -109,16 +111,20 @@ writeLines(parsnp_tree, parsnp_tree_fn)
 
 # Run harvesttools to create a FASTA file containing the aligned genomes
 harvesttools_cmd <- 
-  paste(conda_binary(), "run", "harvesttools", 
+  paste("run", "-n", env_name, 
+        "harvesttools", 
         "-i", file.path(results_dir, "parsnp.ggr"), 
         "-M", file.path(results_dir, "parsnp.aln"))
-res <- system(harvesttools_cmd, intern = TRUE)
+res <- system2(command = conda_binary(), args = harvesttools_cmd, 
+               stdout = TRUE, stderr = TRUE)
 
 # Run snp-dists to create a distance matrix file with pairwise snp distances
 snp_dists_cmd <- 
-  paste(conda_binary(), "run", "snp-dists", 
+  paste("run", "-n", env_name, 
+        "snp-dists", 
         "-b", file.path(results_dir, "parsnp.aln"))
-res <- system(snp_dists_cmd, intern = TRUE)
+res <- system2(command = conda_binary(), args = snp_dists_cmd, 
+               stdout = TRUE, stderr = TRUE)
 res <- gsub('\\.(?:fa(?:sta)?|gbk\\.fna|ref)', '', res)
 writeLines(res, file.path(results_dir, "distances.tab"))
 
