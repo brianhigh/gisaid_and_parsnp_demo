@@ -5,7 +5,6 @@
 # Load packages, installing as needed
 if (!require("pacman", quietly = TRUE)) install.packages("pacman")
 pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here, reticulate)
-#pacman::p_install_gh("Wytamma/GISAIDR", force = TRUE)
 pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 

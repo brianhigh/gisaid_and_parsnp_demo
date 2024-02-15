@@ -1,12 +1,14 @@
 # Get data from GISAID and create distance matrix and phylogenetic tree
 #
 # Prerequisites: GISAID account and RStudio
+#                rsvg requires ImageMagick development libraries (on Ubuntu):
+#                $ sudo apt install libmagick++-dev
 
 # Load packages, installing as needed
 if (!require("pacman", quietly = TRUE)) install.packages("pacman")
 pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here, reticulate, 
-               ggtree, ggimage, RColorBrewer, emojifont, rsvg)
-#pacman::p_install_gh("Wytamma/GISAIDR", force = TRUE)
+               ggimage, RColorBrewer, emojifont, rsvg)
+pacman::p_load_gh('YuLab-SMU/ggtree')
 pacman::p_load_gh("Wytamma/GISAIDR")
 pacman::p_load_gh("deohs/folders")
 
