@@ -10,3 +10,5 @@ This is an example of the following workflow:
 - Plot the phylogenetic tree with [ape](http://ape-package.ird.fr/) and save as a PDF file
 
 To run this workflow, run the R script [gisaid_and_parsnp_demo.R](code/gisaid_and_parsnp_demo.R) after addressing the two prerequisites mentioned in the beginning comments of that script.
+
+Tested on Ubuntu 22.04.3 LTS (Intel Core i7 CPU) and macOS Monterey 12.7.3 (Intel Core i5 CPU). The conda modules do not seem to work on Apple Silicon Macs or on Windows systems (but might work with WSL).
