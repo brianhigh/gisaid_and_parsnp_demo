@@ -3,14 +3,13 @@
 # Prerequisites: GISAID account and RStudio
 #                rsvg requires ImageMagick development libraries (on Ubuntu):
 #                $ sudo apt install libmagick++-dev
+#
+# This file is from: https://github.com/brianhigh/gisaid_and_parsnp_demo
 
-# Load packages, installing as needed
-if (!require("pacman", quietly = TRUE)) install.packages("pacman")
-pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here, reticulate, 
-               ggimage, RColorBrewer, emojifont, rsvg)
-pacman::p_load_gh('YuLab-SMU/ggtree')
-pacman::p_load_gh("Wytamma/GISAIDR")
-pacman::p_load_gh("deohs/folders")
+# Load packages
+source(file.path('code', 'package_installer.R'))
+pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here, reticulate, folders,
+               ggimage, RColorBrewer, emojifont, rsvg, ggtree, GISAIDR)
 
 # Create conda environment if it does not exist
 env_name <- 'parsnp-env'
