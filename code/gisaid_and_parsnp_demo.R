@@ -4,9 +4,8 @@
 
 # Load packages, installing as needed
 if (!require("pacman", quietly = TRUE)) install.packages("pacman")
-pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here, reticulate)
+pacman::p_load(rstudioapi, lubridate, dplyr, ape, fs, here, folders, reticulate)
 pacman::p_load_gh("Wytamma/GISAIDR")
-pacman::p_load_gh("deohs/folders")
 
 # Create conda environment if it does not exist
 env_name <- 'parsnp-env'
