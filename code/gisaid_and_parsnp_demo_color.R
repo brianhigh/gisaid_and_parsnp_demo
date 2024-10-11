@@ -97,10 +97,12 @@ res <- write_fasta(df_seqs, fasta_dir)
 # ## "EPI_ISL_406801"
 # ref_genome_id <- ref_genome_df$accession_id[1]
 ref_genome_id <- "EPI_ISL_406801"
-ref_genome <- download(credentials, ref_genome_id, get_sequence = TRUE)
 id <- paste0(gsub('EPI_ISL_', '', ref_genome_id), '_Reference')
 ref_file <- file.path(data_dir, paste0(id, ".fasta"))
-writeLines(c(c(paste0('>', id)), ref_genome$sequence), con = ref_file)
+if (!file.exists(ref_file)) {
+  ref_genome <- download(credentials, ref_genome_id, get_sequence = TRUE)
+  writeLines(c(c(paste0('>', id)), ref_genome$sequence), con = ref_file)
+}
 
 # Create output folder for parsnp
 results_dir <- here(folders$results)
