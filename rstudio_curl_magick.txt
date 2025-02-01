@@ -1,0 +1,31 @@
+$ R --vanilla --no-save
+
+> # Load packages
+> source(file.path('code', 'package_installer.R'))
+
+# ...
+
+✖ Missing 3 system packages. You'll probably need to install them manually:
++ imagemagick           - magick
++ libcurl4-openssl-dev  - curl  
++ libmagick++-dev       - magick
+ℹ No downloads are needed
+✔ 1 pkg + 41 deps: kept 40 [2.2s]
+                                                                           
+✖ Missing 1 system package. You'll probably need to install it manually:
++ librsvg2-dev  - rsvg
+ℹ No downloads are needed
+✔ 1 pkg: kept 1 [707ms]
+
+
+$ cat rstudio_curl_magick.def
+
+Bootstrap: docker
+From: rocker/verse
+
+%post 
+    apt-get update && apt-get -y install imagemagick libcurl4-openssl-dev libmagick++-dev librsvg2-dev
+
+
+$ apptainer build rstudio_curl_magick.sif rstudio_curl_magick.def
+

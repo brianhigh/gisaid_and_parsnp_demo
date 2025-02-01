@@ -1,0 +1,6 @@
+Bootstrap: docker
+From: rocker/verse
+
+%post 
+    apt-get update && apt-get -y install imagemagick libcurl4-openssl-dev libmagick++-dev librsvg2-dev rclone
+
